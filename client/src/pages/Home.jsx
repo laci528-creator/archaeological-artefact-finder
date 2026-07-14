@@ -2,6 +2,7 @@ import { useState } from "react";
 import SearchBar from "../components/SearchBar";
 import ArtefactList from "../components/ArtefactList";
 import { searchArtefacts } from "../services/api";
+import hourglassLoader from "../assets/hourglass-loader.png";
 
 function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -63,7 +64,7 @@ async function loadArtefacts(query, pageNumber) {
   return (
     <main>
       <h1>Archaeological Artefact Finder</h1>
-      <p>Search ancient objects from museum collections.</p>
+      <p>Search ancient objects from the Metropolitan Museum collections.</p>
 
       <SearchBar
         searchTerm={searchTerm}
@@ -76,30 +77,50 @@ async function loadArtefacts(query, pageNumber) {
           {totalObjectIDs} matching object IDs found. Page {page}.
         </p>
       )}
-            
 
 
-      {loading && <p>Loading artefacts...</p>}
-
-      {errorMessage && <p>{errorMessage}</p>}
-
-      {!loading && <ArtefactList artefacts={artefacts} />}
-
-          {artefacts.length > 0 && (
+      {artefacts.length > 0 && (
         <div className="pagination">
-          <button onClick={handlePreviousPage} disabled={!hasPreviousPage}>
+          <button onClick={handlePreviousPage} disabled={!hasPreviousPage || loading}>
             Previous
           </button>
 
           <span>Page {page}</span>
 
-          <button onClick={handleNextPage} disabled={!hasNextPage}>
+          <button onClick={handleNextPage} disabled={!hasNextPage || loading}>
             Next
           </button>
         </div>
       )}
+            
+{loading && (
+  <div className="loading-container">
+    <img
+      src={hourglassLoader}
+      alt="Loading"
+      className="hourglass-loader"
+    />
+    <p>Searching museum collections...</p>
+  </div>
+)}
 
+      {errorMessage && <p>{errorMessage}</p>}
 
+      {!loading && <ArtefactList artefacts={artefacts} />}
+
+      {artefacts.length > 0 && (
+        <div className="pagination">
+          <button onClick={handlePreviousPage} disabled={!hasPreviousPage || loading}>
+            Previous
+          </button>
+
+          <span>Page {page}</span>
+
+          <button onClick={handleNextPage} disabled={!hasNextPage || loading}>
+            Next
+          </button>
+        </div>
+      )}
 
     </main>
   );

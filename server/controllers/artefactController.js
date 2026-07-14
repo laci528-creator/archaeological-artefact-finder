@@ -63,9 +63,9 @@ async function getObjectIdsForSearch(query) {
     return searchCache.get(normalizedQuery);
   }
 
-  const searchUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${encodeURIComponent(
-    normalizedQuery
-  )}`;
+const searchUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${encodeURIComponent(
+  normalizedQuery
+)}`;
 
   const data = await fetchJsonWithRetry(searchUrl, "Met search request");
 

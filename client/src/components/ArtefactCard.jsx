@@ -1,5 +1,14 @@
 import { Link } from "react-router-dom"; 
 
+function cleanText(text) {
+  if (!text) {
+    return "";
+  }
+
+  return text.replace(/<[^>]*>/g, "");
+}
+
+
 
 function ArtefactCard({ artefact }) { 
     return ( 
@@ -10,18 +19,17 @@ function ArtefactCard({ artefact }) {
 
             )} 
             
-            <h2>{artefact.title || "Untitled object"}</h2> 
+            <h2>{cleanText(artefact.title) || "Untitled object"}</h2> 
                 <p> 
-                    <strong>Culture:</strong> {artefact.culture || "Unknown"} 
+                    <strong>Culture:</strong> {cleanText(artefact.culture) || "Unknown"} 
                 </p> 
-                
                 <p> 
-                    <strong>Period:</strong> {artefact.period || "Unknown"} 
+                    <strong>Period:</strong> {cleanText(artefact.period) || "Unknown"} 
                 </p> 
-                
                 <p> 
-                    <strong>Medium:</strong> {artefact.medium || "Unknown"} 
-                </p> <Link to={`/artefacts/${artefact.objectID}`}>Details</Link> 
+                    <strong>Medium:</strong> {cleanText(artefact.medium) || "Unknown"} 
+                </p> 
+                <Link to={`/artefacts/${artefact.objectID}`}>Details</Link> 
         
         </article> 
     ); 
