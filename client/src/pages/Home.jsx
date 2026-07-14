@@ -61,6 +61,31 @@ async function loadArtefacts(query, pageNumber) {
     await loadArtefacts(lastSearchTerm, page + 1);
   }
 
+
+  const pagination = artefacts.length > 0 && (
+  <div className="pagination">
+    <button
+      type="button"
+      onClick={handlePreviousPage}
+      disabled={!hasPreviousPage || loading}
+    >
+      Previous
+    </button>
+
+    <span>Page {page}</span>
+
+    <button
+      type="button"
+      onClick={handleNextPage}
+      disabled={!hasNextPage || loading}
+    >
+      Next
+    </button>
+  </div>
+);
+
+
+
   return (
     <main>
       <h1>Archaeological Artefact Finder</h1>
@@ -78,49 +103,24 @@ async function loadArtefacts(query, pageNumber) {
         </p>
       )}
 
-
-      {artefacts.length > 0 && (
-        <div className="pagination">
-          <button onClick={handlePreviousPage} disabled={!hasPreviousPage || loading}>
-            Previous
-          </button>
-
-          <span>Page {page}</span>
-
-          <button onClick={handleNextPage} disabled={!hasNextPage || loading}>
-            Next
-          </button>
-        </div>
-      )}
+      {pagination}
             
-{loading && (
-  <div className="loading-container">
-    <img
-      src={hourglassLoader}
-      alt="Loading"
-      className="hourglass-loader"
-    />
-    <p>Searching museum collections...</p>
-  </div>
-)}
+          {loading && (
+            <div className="loading-container">
+              <img
+                src={hourglassLoader}
+                alt="Loading"
+                className="hourglass-loader"
+              />
+              <p>Searching museum collections...</p>
+            </div>
+          )}
 
       {errorMessage && <p>{errorMessage}</p>}
 
       {!loading && <ArtefactList artefacts={artefacts} />}
 
-      {artefacts.length > 0 && (
-        <div className="pagination">
-          <button onClick={handlePreviousPage} disabled={!hasPreviousPage || loading}>
-            Previous
-          </button>
-
-          <span>Page {page}</span>
-
-          <button onClick={handleNextPage} disabled={!hasNextPage || loading}>
-            Next
-          </button>
-        </div>
-      )}
+      {pagination}
 
     </main>
   );
