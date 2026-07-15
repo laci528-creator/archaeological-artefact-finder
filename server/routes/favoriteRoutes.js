@@ -7,9 +7,6 @@ import {
 } from "../controllers/favoriteController.js"; 
 
 
-
-
-
 const router = express.Router(); 
 
 router.get("/", getFavorites); 
