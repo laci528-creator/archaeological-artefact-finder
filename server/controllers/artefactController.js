@@ -1,4 +1,3 @@
-
 const searchCache = new Map();
 const objectCache = new Map();
 
@@ -20,11 +19,12 @@ async function fetchJsonWithRetry(url, label, retries = 1) {
           `${label} failed. Status: ${response.status} ${response.statusText}. Attempt: ${attempt}`
         );
 
-        // don't retry
+        // Do not retry 403 or 404 responses.
         if (response.status === 403 || response.status === 404) {
           return null;
         }
 
+        // Retry other failed requests if another attempt is available.
         if (attempt <= retries) {
           await delay(500);
           continue;
@@ -63,9 +63,9 @@ async function getObjectIdsForSearch(query) {
     return searchCache.get(normalizedQuery);
   }
 
-const searchUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${encodeURIComponent(
-  normalizedQuery
-)}`;
+  const searchUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${encodeURIComponent(
+    normalizedQuery
+  )}`;
 
   const data = await fetchJsonWithRetry(searchUrl, "Met search request");
 
@@ -92,7 +92,6 @@ async function fetchMetObject(id) {
   return artefact;
 }
 
-
 export async function searchArtefacts(req, res) {
   try {
     const query = req.query.query;
@@ -100,7 +99,9 @@ export async function searchArtefacts(req, res) {
     const limit = Number.parseInt(req.query.limit) || 20;
 
     if (!query || !query.trim()) {
-      return res.status(400).json({ message: "Search query is required." });
+      return res.status(400).json({
+        message: "Search query is required.",
+      });
     }
 
     const normalizedQuery = query.trim().toLowerCase();
@@ -114,11 +115,16 @@ export async function searchArtefacts(req, res) {
         normalizedQuery
       )}`;
 
-      const data = await fetchJsonWithRetry(searchUrl, "Met search request", 1);
+      const data = await fetchJsonWithRetry(
+        searchUrl,
+        "Met search request",
+        1
+      );
 
       if (!data || !data.objectIDs) {
         return res.status(503).json({
-          message: "The Met API is currently not available. Please try again later.",
+          message:
+            "The Met API is currently not available. Please try again later.",
         });
       }
 
@@ -137,7 +143,8 @@ export async function searchArtefacts(req, res) {
       });
     }
 
-    const maxIdsToCheck = 120;
+    const maxIdsToCheck = 100;
+
     const startIndex = (page - 1) * maxIdsToCheck;
     const endIndex = startIndex + maxIdsToCheck;
 
@@ -146,7 +153,11 @@ export async function searchArtefacts(req, res) {
     const collectedArtefacts = [];
     const batchSize = 5;
 
-    outerLoop: for (let i = 0; i < idsForThisPage.length; i += batchSize) {
+    outerLoop: for (
+      let i = 0;
+      i < idsForThisPage.length;
+      i += batchSize
+    ) {
       const batchIds = idsForThisPage.slice(i, i + batchSize);
 
       const artefacts = await Promise.all(
@@ -195,7 +206,6 @@ export async function searchArtefacts(req, res) {
   }
 }
 
-
 export async function getArtefactById(req, res) {
   try {
     const id = req.params.id;
@@ -205,7 +215,9 @@ export async function getArtefactById(req, res) {
     );
 
     if (!response.ok) {
-      return res.status(404).json({ message: "Artefact not found." });
+      return res.status(404).json({
+        message: "Artefact not found.",
+      });
     }
 
     const artefact = await response.json();
@@ -213,6 +225,9 @@ export async function getArtefactById(req, res) {
     res.json(artefact);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error while loading artefact details." });
+
+    res.status(500).json({
+      message: "Error while loading artefact details.",
+    });
   }
 }

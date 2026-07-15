@@ -1,73 +1,78 @@
-body { 
-  margin: 0; 
-  font-family: Arial, sans-serif; 
-    background-image:
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-image:
     linear-gradient(rgba(245, 239, 230, 0.85), rgba(245, 239, 230, 0.85)),
     url("./assets/met-facade.webp");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  color: #2f261d; 
-} 
+  color: #2f261d;
+}
 
-main { 
-  width: min(1100px, 90%); 
-  margin: 0 auto; 
-  padding: 2rem 0; 
-} 
+main {
+  width: min(1100px, 90%);
+  margin: 0 auto;
+  padding: 2rem 0;
+}
 
-form { 
-  display: flex; 
-  gap: 0.75rem; 
-  margin: 2rem 0; 
-} 
+form {
+  display: flex;
+  gap: 0.75rem;
+  margin: 2rem 0;
+}
 
-input { 
-  flex: 1; 
+input {
+  flex: 1;
   padding: 0.8rem;
-  border-radius: 10px; 
-} 
+  border-radius: 10px;
+}
 
-button, a { 
-  padding: 0.8rem 1rem; 
+button,
+a {
+  padding: 0.8rem 1rem;
   text-decoration: none;
-  border-radius: 10px; 
-} 
+  border-radius: 10px;
+}
 
-.artefact-grid { 
-  display: grid; 
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-  gap: 1.5rem; 
-} 
+.artefact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
 
-.artefact-card { 
+.artefact-card {
   display: flex;
   flex-direction: column;
-  background: #fffaf2; 
-  border: 1px solid #d8c4a8; 
-  padding: 1rem; 
+  background: #fffaf2;
+  border: 1px solid #d8c4a8;
+  padding: 1rem;
   border-radius: 10px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4); 
-} 
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+}
+
 .card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
   margin-top: auto;
   padding-top: 1rem;
 }
 
+.artefact-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+}
 
-.artefact-card img { 
-  width: 100%; 
-  height: 220px; 
-  object-fit: cover; 
-  border-radius: 8px; 
-} 
-
-.image-placeholder { 
-  height: 220px; 
+.image-placeholder {
+  height: 220px;
   display: grid;
-  place-items: center; 
-  background: #e4d6c1; 
-  border-radius: 8px; 
+  place-items: center;
+  background: #e4d6c1;
+  border-radius: 8px;
 }
 
 .details-button {
@@ -87,6 +92,26 @@ button, a {
   transform: translateY(-1px);
 }
 
+.favorite-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.favorite-button {
+  cursor: pointer;
+}
+
+.favorite-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.favorite-action small {
+  font-size: 0.8rem;
+}
+
 .pagination {
   display: flex;
   justify-content: center;
@@ -99,6 +124,7 @@ button, a {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -119,6 +145,7 @@ button, a {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -162,7 +189,6 @@ button, a {
   padding-left: 1.5rem;
 }
 
-
 .site-header {
   position: sticky;
   top: 0;
@@ -176,7 +202,6 @@ button, a {
   width: min(1100px, 90%);
   margin: 0 auto;
   padding: 0.5rem 0;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
