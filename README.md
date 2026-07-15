@@ -33,17 +33,13 @@ The application uses the Metropolitan Museum of Art Collection API to fetch arte
 
 ## Current Status
 
-The current MVP version includes:
-
-- working search functionality
-- backend API connection
+The current version includes:
+- artefact search
 - paginated results
-- artefact detail pages
-- themed UI design
-- loading animation
-- basic error handling
-
-The next planned step is to add a MySQL database for saving favorite artefacts.
+- detail pages
+- favorite artefacts
+- personal notes for saved artefacts
+- MySQL database connection
 
 ## Planned Improvements
 
@@ -62,4 +58,6 @@ This project was created as a portfolio project to combine archaeological intere
 
 Clone the repository:
 
-git clone https://github.com/your-username/archaeological-artefact-finder.git
+git clone https://github.com/laci528-creator/archaeological-artefact-finder.git
+
+You can import the `database/init.sql` file in phpMyAdmin to create the required database and table.
