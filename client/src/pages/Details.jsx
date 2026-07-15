@@ -37,7 +37,7 @@ function Details() {
         return ( 
             <main> 
                 <h1>{artefact.title || "Untitled object"}</h1> {artefact.primaryImage ? ( 
-                    <img src={artefact.primaryImage} alt={artefact.title} /> 
+                    <img className="details-img" src={artefact.primaryImage} alt={artefact.title} /> 
                 ) : ( 
                 <p>No image available.</p> 
                 )} 
