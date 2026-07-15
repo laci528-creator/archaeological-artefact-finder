@@ -29,7 +29,11 @@ function ArtefactCard({ artefact }) {
                 <p> 
                     <strong>Medium:</strong> {cleanText(artefact.medium) || "Unknown"} 
                 </p> 
-                <Link to={`/artefacts/${artefact.objectID}`}>Details</Link> 
+                <div className="card-actions">
+                    <Link to={`/artefacts/${artefact.objectID}`}
+                        className="details-button">Details
+                    </Link>
+                </div>
         
         </article> 
     ); 
