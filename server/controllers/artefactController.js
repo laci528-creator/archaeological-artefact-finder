@@ -6,7 +6,7 @@ function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function fetchJsonWithRetry(url, label, retries = 2) {
+async function fetchJsonWithRetry(url, label, retries = 1) {
   for (let attempt = 1; attempt <= retries + 1; attempt++) {
     try {
       const response = await fetch(url, {
@@ -20,8 +20,13 @@ async function fetchJsonWithRetry(url, label, retries = 2) {
           `${label} failed. Status: ${response.status} ${response.statusText}. Attempt: ${attempt}`
         );
 
+        // don't retry
+        if (response.status === 403 || response.status === 404) {
+          return null;
+        }
+
         if (attempt <= retries) {
-          await delay(700);
+          await delay(500);
           continue;
         }
 
@@ -32,12 +37,6 @@ async function fetchJsonWithRetry(url, label, retries = 2) {
 
       if (!contentType || !contentType.includes("application/json")) {
         console.log(`${label} did not return JSON. Attempt: ${attempt}`);
-
-        if (attempt <= retries) {
-          await delay(700);
-          continue;
-        }
-
         return null;
       }
 
@@ -46,15 +45,16 @@ async function fetchJsonWithRetry(url, label, retries = 2) {
       console.log(`${label} error: ${error.message}. Attempt: ${attempt}`);
 
       if (attempt <= retries) {
-        await delay(700);
+        await delay(500);
         continue;
       }
 
       return null;
     }
   }
-}
 
+  return null;
+}
 
 async function getObjectIdsForSearch(query) {
   const normalizedQuery = query.trim().toLowerCase();
@@ -87,16 +87,10 @@ async function fetchMetObject(id) {
 
   const artefact = await fetchJsonWithRetry(objectUrl, `Object ${id}`, 1);
 
-  if (!artefact) {
-    return null;
-  }
-
   objectCache.set(id, artefact);
 
   return artefact;
 }
-
-
 
 
 export async function searchArtefacts(req, res) {
@@ -109,7 +103,28 @@ export async function searchArtefacts(req, res) {
       return res.status(400).json({ message: "Search query is required." });
     }
 
-    const objectIDs = await getObjectIdsForSearch(query);
+    const normalizedQuery = query.trim().toLowerCase();
+
+    let objectIDs;
+
+    if (searchCache.has(normalizedQuery)) {
+      objectIDs = searchCache.get(normalizedQuery);
+    } else {
+      const searchUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${encodeURIComponent(
+        normalizedQuery
+      )}`;
+
+      const data = await fetchJsonWithRetry(searchUrl, "Met search request", 1);
+
+      if (!data || !data.objectIDs) {
+        return res.status(503).json({
+          message: "The Met API is currently not available. Please try again later.",
+        });
+      }
+
+      objectIDs = data.objectIDs;
+      searchCache.set(normalizedQuery, objectIDs);
+    }
 
     if (!objectIDs || objectIDs.length === 0) {
       return res.json({
@@ -122,14 +137,17 @@ export async function searchArtefacts(req, res) {
       });
     }
 
-    const startValidIndex = (page - 1) * limit;
-    const collectedArtefacts = [];
-    let validArtefactCounter = 0;
+    const maxIdsToCheck = 120;
+    const startIndex = (page - 1) * maxIdsToCheck;
+    const endIndex = startIndex + maxIdsToCheck;
 
+    const idsForThisPage = objectIDs.slice(startIndex, endIndex);
+
+    const collectedArtefacts = [];
     const batchSize = 5;
 
-    outerLoop: for (let i = 0; i < objectIDs.length; i += batchSize) {
-      const batchIds = objectIDs.slice(i, i + batchSize);
+    outerLoop: for (let i = 0; i < idsForThisPage.length; i += batchSize) {
+      const batchIds = idsForThisPage.slice(i, i + batchSize);
 
       const artefacts = await Promise.all(
         batchIds.map((id) => fetchMetObject(id))
@@ -149,29 +167,23 @@ export async function searchArtefacts(req, res) {
           continue;
         }
 
-        if (validArtefactCounter >= startValidIndex) {
-          collectedArtefacts.push(artefact);
-        }
+        collectedArtefacts.push(artefact);
 
-        validArtefactCounter++;
-
-        if (collectedArtefacts.length > limit) {
+        if (collectedArtefacts.length >= limit) {
           break outerLoop;
         }
       }
 
-      await delay(150);
+      await delay(100);
     }
-
-    const results = collectedArtefacts.slice(0, limit);
 
     res.json({
       totalObjectIDs: objectIDs.length,
       page,
       limit,
-      results,
+      results: collectedArtefacts,
       hasPreviousPage: page > 1,
-      hasNextPage: collectedArtefacts.length > limit,
+      hasNextPage: endIndex < objectIDs.length,
     });
   } catch (error) {
     console.error("Search error:", error);
@@ -182,7 +194,6 @@ export async function searchArtefacts(req, res) {
     });
   }
 }
-
 
 
 export async function getArtefactById(req, res) {

@@ -1,6 +1,5 @@
 
-
-const BASE_URL = "http://localhost:5000/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 export async function searchArtefacts(query, page = 1, limit = 20) {
   const url = `${BASE_URL}/artefacts/search?query=${encodeURIComponent(
