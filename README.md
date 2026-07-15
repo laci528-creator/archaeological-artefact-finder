@@ -77,3 +77,5 @@ It demonstrates API integration, React components, backend routing, pagination, 
 Clone the repository:
 
 git clone https://github.com/laci528-creator/archaeological-artefact-finder.git
+
+Use the database/init.sql file to create the required database structure.
