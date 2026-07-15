@@ -53,6 +53,13 @@ button, a {
   border-radius: 8px; 
 } 
 
+.details-img {
+  max-width: 800px;
+  max-height: 800px; 
+  object-fit: cover; 
+  border-radius: 8px; 
+}
+
 .image-placeholder { 
   height: 220px; 
   display: grid;
@@ -182,3 +189,11 @@ button, a {
   }
 }
 
+.artefact-card-in-fav {
+  background: #fffaf2; 
+  border: 1px solid #d8c4a8; 
+  padding: 1rem; 
+  border-radius: 10px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4); 
+
+}
