@@ -33,3 +33,45 @@ export async function getArtefactById(id) {
   return response.json();
 }
 
+export async function getFavorites() { 
+  const response = await fetch(`${BASE_URL}/favorites`); 
+  return response.json(); 
+} 
+
+
+
+export async function addFavorite(artefact) { 
+  const response = await fetch(`${BASE_URL}/favorites`, { 
+      method: "POST", 
+      headers: { 
+        "Content-Type": "application/json", 
+      }, 
+      
+      body: JSON.stringify(artefact), 
+    }); 
+    
+    if (!response.ok) { 
+      
+      throw new Error("Could not save favorite"); 
+    } 
+    
+    return response.json(); 
+} 
+
+
+export async function deleteFavorite(id) { 
+  const response = await fetch(`${BASE_URL}/favorites/${id}`, { 
+    method: "DELETE", 
+  }); 
+  return response.json(); 
+} 
+
+
+export async function updateFavoriteNote(id, note) { 
+  const response = await fetch(`${BASE_URL}/favorites/${id}/note`, { 
+    method: "PUT", 
+    headers: { "Content-Type": "application/json", }, 
+    body: JSON.stringify({ note }), 
+  }); 
+  return response.json(); 
+}

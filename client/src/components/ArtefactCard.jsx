@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"; 
+import FavoriteButton from "./FavoriteButton";
 
 function cleanText(text) {
   if (!text) {
@@ -7,7 +8,6 @@ function cleanText(text) {
 
   return text.replace(/<[^>]*>/g, "");
 }
-
 
 
 function ArtefactCard({ artefact }) { 
@@ -29,8 +29,11 @@ function ArtefactCard({ artefact }) {
                 <p> 
                     <strong>Medium:</strong> {cleanText(artefact.medium) || "Unknown"} 
                 </p> 
-                <Link to={`/artefacts/${artefact.objectID}`}>Details</Link> 
-        
+                <div className="card-actions">
+                    <Link to={`/artefacts/${artefact.objectID}`}>Details</Link>
+
+                    <FavoriteButton artefact={artefact} />
+                </div>
         </article> 
     ); 
 } 
