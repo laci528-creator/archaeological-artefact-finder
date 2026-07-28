@@ -2,9 +2,6 @@
 
 
 
-
-
-
 function SearchBar({ searchTerm, setSearchTerm, onSearch }) { 
     return ( 
         <form onSubmit={onSearch}> 
@@ -18,6 +15,5 @@ function SearchBar({ searchTerm, setSearchTerm, onSearch }) {
     );
 } 
                 
-                
-
+            
 export default SearchBar;

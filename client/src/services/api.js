@@ -38,7 +38,6 @@ export async function getFavorites() {
 } 
 
 
-
 export async function addFavorite(artefact) { 
   const response = await fetch(`${BASE_URL}/favorites`, { 
       method: "POST", 
