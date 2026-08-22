@@ -56,47 +56,57 @@ async function fetchJsonWithRetry(url, label, retries = 1) {
   return null;
 }
 
-async function getObjectIdsForSearch(query) {
+async function getObjectIdsForSearch(query, withImages) {
   const normalizedQuery = query.trim().toLowerCase();
+  const cacheKey = `${normalizedQuery}:${withImages}`;
 
-  if (searchCache.has(normalizedQuery)) {
-    return searchCache.get(normalizedQuery);
+  if (searchCache.has(cacheKey)) {
+    return searchCache.get(cacheKey);
   }
 
-  const searchUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${encodeURIComponent(
-    normalizedQuery
-  )}`;
+  const imageFilter = withImages ? "&hasImages=true" : "";
+
+  const searchUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${encodeURIComponent(
+    normalizedQuery)}${imageFilter}`;
 
   const data = await fetchJsonWithRetry(searchUrl, "Met search request");
 
-  if (!data || !data.objectIDs) {
+  if (!data) {
     return null;
   }
 
-  searchCache.set(normalizedQuery, data.objectIDs);
+  const objectIDs = data.objectIDs ?? [];
 
-  return data.objectIDs;
+  searchCache.set(cacheKey, objectIDs);
+
+  return objectIDs;
 }
 
+
+
 async function fetchMetObject(id) {
-  if (objectCache.has(id)) {
-    return objectCache.get(id);
+  const cacheKey = String(id);
+
+  if (objectCache.has(cacheKey)) {
+    return objectCache.get(cacheKey);
   }
 
-  const objectUrl = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`;
+  const objectUrl = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${cacheKey}`;
 
-  const artefact = await fetchJsonWithRetry(objectUrl, `Object ${id}`, 1);
+  const artefact = await fetchJsonWithRetry(objectUrl, `Object ${cacheKey}`, 1);
 
   if (artefact) {
-    objectCache.set(id, artefact);
+    objectCache.set(cacheKey, artefact);
   }
 
   return artefact;
 }
 
+
 export async function searchArtefacts(req, res) {
   try {
     const query = req.query.query;
+    const withImages = req.query.withImages === "true";
     const parsedPage = Number.parseInt(req.query.page, 10);
     const parsedLimit = Number.parseInt(req.query.limit, 10);
 
@@ -116,7 +126,7 @@ export async function searchArtefacts(req, res) {
       });
     }
 
-    const objectIDs = await getObjectIdsForSearch(query);
+    const objectIDs = await getObjectIdsForSearch(query, withImages);
 
       if (objectIDs === null) {
         return res.status(503).json({
@@ -136,17 +146,15 @@ export async function searchArtefacts(req, res) {
       });
     }
 
-    const maxIdsToCheck = 100;
-
-    const startIndex = (page - 1) * maxIdsToCheck;
-    const endIndex = startIndex + maxIdsToCheck;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
 
     const idsForThisPage = objectIDs.slice(startIndex, endIndex);
 
     const collectedArtefacts = [];
     const batchSize = 5;
 
-    outerLoop: for (
+    for (
       let i = 0;
       i < idsForThisPage.length;
       i += batchSize
@@ -158,23 +166,12 @@ export async function searchArtefacts(req, res) {
       );
 
       for (const artefact of artefacts) {
-        if (!artefact) {
-          continue;
+        if (artefact) {
+          collectedArtefacts.push(artefact);
         }
 
-        const hasValidTitle =
-          artefact.title &&
-          artefact.title.trim() !== "" &&
-          artefact.title.toLowerCase() !== "untitled object";
-
-        if (!hasValidTitle) {
-          continue;
-        }
-
-        collectedArtefacts.push(artefact);
-
-        if (collectedArtefacts.length >= limit) {
-          break outerLoop;
+        if (i + batchSize < idsForThisPage.length) {
+          await delay(100);
         }
       }
 
@@ -194,7 +191,6 @@ export async function searchArtefacts(req, res) {
 
     res.status(500).json({
       message: "Error while loading artefacts.",
-      error: error.message,
     });
   }
 }
@@ -203,21 +199,23 @@ export async function getArtefactById(req, res) {
   try {
     const id = req.params.id;
 
-    const response = await fetch(
-      `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`
-    );
+    if (!/^\d+$/.test(id)) {
+      return res.status(400).json({
+        message: "Invalid artefact ID.",
+      });
+    }
 
-    if (!response.ok) {
+    const artefact = await fetchMetObject(id);
+
+    if (!artefact) {
       return res.status(404).json({
         message: "Artefact not found.",
       });
     }
 
-    const artefact = await response.json();
-
     res.json(artefact);
   } catch (error) {
-    console.error(error);
+    console.error("Artefact details error:", error);
 
     res.status(500).json({
       message: "Error while loading artefact details.",
