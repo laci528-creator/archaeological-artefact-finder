@@ -52,7 +52,11 @@ export async function addFavorite(artefact) {
     }); 
     
     if (!response.ok) { 
-      throw new Error("Could not save favorite"); 
+      const errorData = await response.json().catch(() => ({}));
+
+      throw new Error(
+        errorData.message || "Could not save favorite"
+      ); 
     } 
     
     return response.json(); 

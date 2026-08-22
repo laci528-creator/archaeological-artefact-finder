@@ -9,11 +9,14 @@ function FavoriteButton({ artefact }) {
     const favoriteData = {
       object_id: artefact.objectID,
       title: artefact.title || "Untitled object",
-      image_url: artefact.primaryImageSmall || artefact.primaryImage || "",
-      culture: artefact.culture || "",
-      period: artefact.period || "",
-      medium: artefact.medium || "",
-      object_url: artefact.objectURL || "",
+      image_url: 
+        artefact.primaryImageSmall || 
+        artefact.primaryImage || 
+        null,
+      culture: artefact.culture || null,
+      period: artefact.period || null,
+      medium: artefact.medium || null,
+      object_url: artefact.objectURL || null,
     };
 
     try {
