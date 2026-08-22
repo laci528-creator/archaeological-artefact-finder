@@ -14,12 +14,8 @@ function Home() {
   const [totalObjectIDs, setTotalObjectIDs] = useState(0);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [withImages, setWithImages] = useState(false);
-  const [lastWithImages, setLastWithImages] = useState(false);
-  const [titleOnly, setTitleOnly] = useState(false);
-  const [lastTitleOnly, setLastTitleOnly] = useState(false);
 
-async function loadArtefacts(query, pageNumber, imageFilter, titleFilter) {
+async function loadArtefacts(query, pageNumber) {
   try {
     setLoading(true);
     setErrorMessage("");
@@ -27,9 +23,7 @@ async function loadArtefacts(query, pageNumber, imageFilter, titleFilter) {
     const data = await searchArtefacts(
       query,
       pageNumber,
-      20,
-      imageFilter,
-      titleFilter
+      20
     );
 
 
@@ -57,10 +51,8 @@ async function loadArtefacts(query, pageNumber, imageFilter, titleFilter) {
     }
 
     setLastSearchTerm(searchTerm);
-    setLastWithImages(withImages);
-    setLastTitleOnly(titleOnly);
 
-    await loadArtefacts(searchTerm, 1, withImages, titleOnly);
+    await loadArtefacts(searchTerm, 1);
   }
 
 async function handlePreviousPage() {
@@ -68,8 +60,6 @@ async function handlePreviousPage() {
     await loadArtefacts(
       lastSearchTerm,
       page - 1,
-      lastWithImages,
-      lastTitleOnly
     );
   }
 }
@@ -78,8 +68,6 @@ async function handleNextPage() {
   await loadArtefacts(
     lastSearchTerm,
     page + 1,
-    lastWithImages,
-    lastTitleOnly
   );
 }
 
@@ -118,38 +106,6 @@ async function handleNextPage() {
         setSearchTerm={setSearchTerm}
         onSearch={handleSearch}
       />
-      <label className="image-filter">
-        <input
-          type="checkbox"
-          checked={withImages}
-          onChange={(event) => setWithImages(event.target.checked)}
-        />
-        Only show artefacts with images
-      </label>
-
-      <fieldset className="search-mode">
-        <legend>Search mode</legend>
-
-        <label>
-          <input
-            type="radio"
-            name="searchMode"
-            checked={!titleOnly}
-            onChange={() => setTitleOnly(false)}
-          />
-          Broad search
-        </label>
-
-        <label>
-          <input
-            type="radio"
-            name="searchMode"
-            checked={titleOnly}
-            onChange={() => setTitleOnly(true)}
-          />
-          Title only
-        </label>
-      </fieldset>
 
       {totalObjectIDs > 0 && (
         <p>

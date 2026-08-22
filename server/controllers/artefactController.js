@@ -56,19 +56,11 @@ async function fetchJsonWithRetry(url, label, retries = 1) {
   return null;
 }
 
-async function getObjectIdsForSearch(query, withImages, titleOnly) {
+async function getObjectIdsForSearch(query) {
   const normalizedQuery = query.trim().toLowerCase();
-  const cacheKey = `${normalizedQuery}:${withImages}:${titleOnly}`;
-
-  if (searchCache.has(cacheKey)) {
-    return searchCache.get(cacheKey);
-  }
-
-  const imageFilter = withImages ? "&hasImages=true" : "";
-  const titleFilter = titleOnly ? "&title=true" : "";
 
   const searchUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${encodeURIComponent(
-    normalizedQuery)}${imageFilter}${titleFilter}`;
+    normalizedQuery)}`;
 
     console.log(searchUrl);
 
@@ -79,8 +71,6 @@ async function getObjectIdsForSearch(query, withImages, titleOnly) {
   }
 
   const objectIDs = data.objectIDs ?? [];
-
-  searchCache.set(cacheKey, objectIDs);
 
   return objectIDs;
 }
@@ -109,8 +99,6 @@ async function fetchMetObject(id) {
 export async function searchArtefacts(req, res) {
   try {
     const query = req.query.query;
-    const withImages = req.query.withImages === "true";
-    const titleOnly = req.query.titleOnly === "true";
     const parsedPage = Number.parseInt(req.query.page, 10);
     const parsedLimit = Number.parseInt(req.query.limit, 10);
 
@@ -130,7 +118,7 @@ export async function searchArtefacts(req, res) {
       });
     }
 
-    const objectIDs = await getObjectIdsForSearch(query, withImages, titleOnly);
+    const objectIDs = await getObjectIdsForSearch(query);
 
     if (objectIDs === null) {
         return res.status(503).json({
@@ -174,19 +162,12 @@ export async function searchArtefacts(req, res) {
           continue;
         }
 
-          if (
-            withImages &&
-            !artefact.primaryImageSmall &&
-            !artefact.primaryImage
-          ) {
-            continue;
-          }
-
           collectedArtefacts.push(artefact);
 
-          if (i + batchSize < idsForThisPage.length) {
-            await delay(100);
+
         }
+                  if (i + batchSize < idsForThisPage.length) {
+            await delay(100);
       }
 
     }
