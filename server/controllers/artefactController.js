@@ -56,18 +56,21 @@ async function fetchJsonWithRetry(url, label, retries = 1) {
   return null;
 }
 
-async function getObjectIdsForSearch(query, withImages) {
+async function getObjectIdsForSearch(query, withImages, titleOnly) {
   const normalizedQuery = query.trim().toLowerCase();
-  const cacheKey = `${normalizedQuery}:${withImages}`;
+  const cacheKey = `${normalizedQuery}:${withImages}:${titleOnly}`;
 
   if (searchCache.has(cacheKey)) {
     return searchCache.get(cacheKey);
   }
 
   const imageFilter = withImages ? "&hasImages=true" : "";
+  const titleFilter = titleOnly ? "&title=true" : "";
 
   const searchUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${encodeURIComponent(
-    normalizedQuery)}${imageFilter}`;
+    normalizedQuery)}${imageFilter}${titleFilter}`;
+
+    console.log(searchUrl);
 
   const data = await fetchJsonWithRetry(searchUrl, "Met search request");
 
@@ -107,6 +110,7 @@ export async function searchArtefacts(req, res) {
   try {
     const query = req.query.query;
     const withImages = req.query.withImages === "true";
+    const titleOnly = req.query.titleOnly === "true";
     const parsedPage = Number.parseInt(req.query.page, 10);
     const parsedLimit = Number.parseInt(req.query.limit, 10);
 
@@ -126,7 +130,7 @@ export async function searchArtefacts(req, res) {
       });
     }
 
-    const objectIDs = await getObjectIdsForSearch(query, withImages);
+    const objectIDs = await getObjectIdsForSearch(query, withImages, titleOnly);
 
     if (objectIDs === null) {
         return res.status(503).json({

@@ -16,8 +16,10 @@ function Home() {
   const [errorMessage, setErrorMessage] = useState("");
   const [withImages, setWithImages] = useState(false);
   const [lastWithImages, setLastWithImages] = useState(false);
+  const [titleOnly, setTitleOnly] = useState(false);
+  const [lastTitleOnly, setLastTitleOnly] = useState(false);
 
-async function loadArtefacts(query, pageNumber, imageFilter) {
+async function loadArtefacts(query, pageNumber, imageFilter, titleFilter) {
   try {
     setLoading(true);
     setErrorMessage("");
@@ -26,7 +28,8 @@ async function loadArtefacts(query, pageNumber, imageFilter) {
       query,
       pageNumber,
       20,
-      imageFilter
+      imageFilter,
+      titleFilter
     );
 
 
@@ -55,8 +58,9 @@ async function loadArtefacts(query, pageNumber, imageFilter) {
 
     setLastSearchTerm(searchTerm);
     setLastWithImages(withImages);
+    setLastTitleOnly(titleOnly);
 
-    await loadArtefacts(searchTerm, 1, withImages);
+    await loadArtefacts(searchTerm, 1, withImages, titleOnly);
   }
 
 async function handlePreviousPage() {
@@ -64,7 +68,8 @@ async function handlePreviousPage() {
     await loadArtefacts(
       lastSearchTerm,
       page - 1,
-      lastWithImages
+      lastWithImages,
+      lastTitleOnly
     );
   }
 }
@@ -73,7 +78,8 @@ async function handleNextPage() {
   await loadArtefacts(
     lastSearchTerm,
     page + 1,
-    lastWithImages
+    lastWithImages,
+    lastTitleOnly
   );
 }
 
@@ -120,6 +126,30 @@ async function handleNextPage() {
         />
         Only show artefacts with images
       </label>
+
+      <fieldset className="search-mode">
+        <legend>Search mode</legend>
+
+        <label>
+          <input
+            type="radio"
+            name="searchMode"
+            checked={!titleOnly}
+            onChange={() => setTitleOnly(false)}
+          />
+          Broad search
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="searchMode"
+            checked={titleOnly}
+            onChange={() => setTitleOnly(true)}
+          />
+          Title only
+        </label>
+      </fieldset>
 
       {totalObjectIDs > 0 && (
         <p>

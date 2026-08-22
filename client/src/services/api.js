@@ -1,13 +1,13 @@
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-export async function searchArtefacts(query, page = 1, limit = 20, withImages = false) {
+export async function searchArtefacts(query, page = 1, limit = 20, withImages = false, titleOnly = false) {
 
   const url = `${BASE_URL}/artefacts/search?query=${encodeURIComponent(
     query
-  )}&page=${page}&limit=${limit}&withImages=${withImages}`;
+  )}&page=${page}&limit=${limit}&withImages=${withImages}&titleOnly=${titleOnly}`;
 
-  //console.log("Request URL:", url);
+  console.log("Request URL:", url);
 
   const response = await fetch(url);
 
