@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import FavoriteButton from "./FavoriteButton";
 
@@ -9,13 +10,24 @@ function cleanText(text) {
   return text.replace(/<[^>]*>/g, "");
 }
 
+
+
 function ArtefactCard({ artefact }) {
+
+const [imageError, setImageError] = useState(false);
+
+const imageUrl =
+  artefact.primaryImageSmall ||
+  artefact.primaryImage ||
+  ""; 
+
   return (
     <article className="artefact-card">
-      {artefact.primaryImageSmall ? (
+      {imageUrl && !imageError  ? (
         <img
-          src={artefact.primaryImageSmall}
-          alt={artefact.title}
+          src={imageUrl}
+          alt={artefact.title || "Artefact"}
+          onError={() => setImageError(true)}
         />
       ) : (
         <div className="image-placeholder">No image available</div>
