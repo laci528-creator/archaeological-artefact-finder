@@ -14,15 +14,23 @@ function Home() {
   const [totalObjectIDs, setTotalObjectIDs] = useState(0);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [withImages, setWithImages] = useState(false);
+  const [lastWithImages, setLastWithImages] = useState(false);
 
-async function loadArtefacts(query, pageNumber) {
+async function loadArtefacts(query, pageNumber, imageFilter) {
   try {
     setLoading(true);
     setErrorMessage("");
 
-    const data = await searchArtefacts(query, pageNumber, 20);
+    const data = await searchArtefacts(
+      query,
+      pageNumber,
+      20,
+      imageFilter
+    );
 
-    console.log("Backend response:", data);
+
+    //console.log("Backend response:", data);
 
     setArtefacts(data.results || []);
     setPage(data.page);
@@ -37,8 +45,6 @@ async function loadArtefacts(query, pageNumber) {
   }
 }
 
-
-
   async function handleSearch(event) {
     event.preventDefault();
 
@@ -48,18 +54,28 @@ async function loadArtefacts(query, pageNumber) {
     }
 
     setLastSearchTerm(searchTerm);
-    await loadArtefacts(searchTerm, 1);
+    setLastWithImages(withImages);
+
+    await loadArtefacts(searchTerm, 1, withImages);
   }
 
-  async function handlePreviousPage() {
-    if (page > 1) {
-      await loadArtefacts(lastSearchTerm, page - 1);
-    }
+async function handlePreviousPage() {
+  if (page > 1) {
+    await loadArtefacts(
+      lastSearchTerm,
+      page - 1,
+      lastWithImages
+    );
   }
+}
 
-  async function handleNextPage() {
-    await loadArtefacts(lastSearchTerm, page + 1);
-  }
+async function handleNextPage() {
+  await loadArtefacts(
+    lastSearchTerm,
+    page + 1,
+    lastWithImages
+  );
+}
 
 
   const pagination = artefacts.length > 0 && (
@@ -96,6 +112,14 @@ async function loadArtefacts(query, pageNumber) {
         setSearchTerm={setSearchTerm}
         onSearch={handleSearch}
       />
+      <label className="image-filter">
+        <input
+          type="checkbox"
+          checked={withImages}
+          onChange={(event) => setWithImages(event.target.checked)}
+        />
+        Only show artefacts with images
+      </label>
 
       {totalObjectIDs > 0 && (
         <p>

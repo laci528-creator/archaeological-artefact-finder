@@ -128,7 +128,7 @@ export async function searchArtefacts(req, res) {
 
     const objectIDs = await getObjectIdsForSearch(query, withImages);
 
-      if (objectIDs === null) {
+    if (objectIDs === null) {
         return res.status(503).json({
           message:
             "The Met API is currently not available. Please try again later.",
@@ -170,12 +170,21 @@ export async function searchArtefacts(req, res) {
           collectedArtefacts.push(artefact);
         }
 
+          if (
+            withImages &&
+            !artefact.primaryImageSmall &&
+            !artefact.primaryImage
+          ) {
+            continue;
+          }
+
+          
+
         if (i + batchSize < idsForThisPage.length) {
           await delay(100);
         }
       }
 
-      await delay(100);
     }
 
     res.json({
