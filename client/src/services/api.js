@@ -31,7 +31,12 @@ export async function getArtefactById(id) {
 }
 
 export async function getFavorites() { 
-  const response = await fetch(`${BASE_URL}/favorites`); 
+  const response = await fetch(`${BASE_URL}/favorites`);
+  
+   if (!response.ok) {
+    throw new Error("Failed to fetch favorites");
+  }
+
   return response.json(); 
 } 
 
@@ -47,7 +52,6 @@ export async function addFavorite(artefact) {
     }); 
     
     if (!response.ok) { 
-      
       throw new Error("Could not save favorite"); 
     } 
     
@@ -59,6 +63,11 @@ export async function deleteFavorite(id) {
   const response = await fetch(`${BASE_URL}/favorites/${id}`, { 
     method: "DELETE", 
   }); 
+
+  if (!response.ok) {
+    throw new Error("Could not delete favorite");
+  }
+
   return response.json(); 
 } 
 
@@ -68,6 +77,11 @@ export async function updateFavoriteNote(id, note) {
     method: "PUT", 
     headers: { "Content-Type": "application/json", }, 
     body: JSON.stringify({ note }), 
-  }); 
+  });
+  
+    if (!response.ok) {
+    throw new Error("Could not update favorite note");
+  }
+
   return response.json(); 
 }
