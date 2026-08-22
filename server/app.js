@@ -1,5 +1,8 @@
+import "dotenv/config";
+
 import express from "express";
 import cors from "cors";
+
 import artefactRoutes from "./routes/artefactRoutes.js";
 import favoriteRoutes from "./routes/favoriteRoutes.js";
 
@@ -8,7 +11,8 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   process.env.CLIENT_URL,
-];
+].filter(Boolean);
+
 
 app.use(
   cors({
