@@ -87,7 +87,9 @@ async function fetchMetObject(id) {
 
   const artefact = await fetchJsonWithRetry(objectUrl, `Object ${id}`, 1);
 
-  objectCache.set(id, artefact);
+  if (artefact) {
+    objectCache.set(id, artefact);
+  }
 
   return artefact;
 }
@@ -95,8 +97,18 @@ async function fetchMetObject(id) {
 export async function searchArtefacts(req, res) {
   try {
     const query = req.query.query;
-    const page = Number.parseInt(req.query.page) || 1;
-    const limit = Number.parseInt(req.query.limit) || 20;
+    const parsedPage = Number.parseInt(req.query.page, 10);
+    const parsedLimit = Number.parseInt(req.query.limit, 10);
+
+    const page =
+      Number.isInteger(parsedPage) && parsedPage > 0
+        ? parsedPage
+        : 1;
+
+    const limit =
+      Number.isInteger(parsedLimit) && parsedLimit > 0
+        ? Math.min(parsedLimit, 20)
+        : 20;
 
     if (!query || !query.trim()) {
       return res.status(400).json({
@@ -104,35 +116,16 @@ export async function searchArtefacts(req, res) {
       });
     }
 
-    const normalizedQuery = query.trim().toLowerCase();
+    const objectIDs = await getObjectIdsForSearch(query);
 
-    let objectIDs;
-
-    if (searchCache.has(normalizedQuery)) {
-      objectIDs = searchCache.get(normalizedQuery);
-    } else {
-      const searchUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${encodeURIComponent(
-        normalizedQuery
-      )}`;
-
-      const data = await fetchJsonWithRetry(
-        searchUrl,
-        "Met search request",
-        1
-      );
-
-      if (!data || !data.objectIDs) {
+      if (objectIDs === null) {
         return res.status(503).json({
           message:
             "The Met API is currently not available. Please try again later.",
         });
       }
 
-      objectIDs = data.objectIDs;
-      searchCache.set(normalizedQuery, objectIDs);
-    }
-
-    if (!objectIDs || objectIDs.length === 0) {
+    if (objectIDs.length === 0) {
       return res.json({
         totalObjectIDs: 0,
         page,
