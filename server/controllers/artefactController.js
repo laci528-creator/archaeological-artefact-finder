@@ -166,8 +166,8 @@ export async function searchArtefacts(req, res) {
       );
 
       for (const artefact of artefacts) {
-        if (artefact) {
-          collectedArtefacts.push(artefact);
+        if (!artefact) {
+          continue;
         }
 
           if (
@@ -178,10 +178,10 @@ export async function searchArtefacts(req, res) {
             continue;
           }
 
-          
+          collectedArtefacts.push(artefact);
 
-        if (i + batchSize < idsForThisPage.length) {
-          await delay(100);
+          if (i + batchSize < idsForThisPage.length) {
+            await delay(100);
         }
       }
 
