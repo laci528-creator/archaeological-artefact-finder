@@ -6,7 +6,7 @@ USE artefact_finder;
 
 CREATE TABLE IF NOT EXISTS favorites (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    object_id INT NOT NULL UNIQUE,
+    object_id UNSIGNED INT NOT NULL UNIQUE,
     title VARCHAR(255) NOT NULL,
     image_url TEXT,
     culture VARCHAR(255),
