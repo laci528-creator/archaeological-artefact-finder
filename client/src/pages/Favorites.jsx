@@ -8,30 +8,59 @@ import { Link } from "react-router-dom";
 
 function Favorites() {
   const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function loadFavorites() {
-    const data = await getFavorites();
-    setFavorites(data);
-  }
+      try {
+        setLoading(true);
+        setErrorMessage("");
+
+        const data = await getFavorites();
+        setFavorites(data);
+      } catch (error) {
+        setErrorMessage(error.message);
+      } finally {
+        setLoading(false);
+      }
+    }
 
   useEffect(() => {
     loadFavorites();
   }, []);
 
   async function handleDelete(id) {
-    await deleteFavorite(id);
-    loadFavorites();
-  }
+      try {
+        setErrorMessage("");
+
+        await deleteFavorite(id);
+        await loadFavorites();
+      } catch (error) {
+        setErrorMessage(error.message);
+      }
+    }
 
   async function handleNoteChange(id, note) {
-    await updateFavoriteNote(id, note);
-  }
+      try {
+        setErrorMessage("");
+
+        await updateFavoriteNote(id, note);
+      } catch (error) {
+        setErrorMessage(error.message);
+      }
+    }
 
   return (
     <main>
       <h1>Saved Artefacts</h1>
 
-      {favorites.length === 0 ? (
+      {loading && <p>Loading saved artefacts...</p>}
+
+      {errorMessage && (
+        <p className="error-message">{errorMessage}</p>
+      )}
+
+      {!loading && favorites.length === 0 ?  (
         <p>
           No saved artefacts yet. Start exploring and save your favorite
           objects.
