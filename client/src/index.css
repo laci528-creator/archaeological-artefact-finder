@@ -1,13 +1,38 @@
+:root {
+  /* Palette from https://www.color-hex.com/color-palette/547*/
+  --museum-dark: #8d5524;
+  --museum-primary: #c68642;
+  --museum-medium: #e0ac69;
+  --museum-border: #d8b27c;
+  --museum-pale: #ffdbac;
+
+  /* Supporting colors */
+  --museum-text: #2f261d;
+  --museum-card: #fffaf4;
+  --museum-background: #f7efe5;
+  --museum-placeholder: #d4d0cd;
+
+  /* Functional color */
+  --danger: #8b3f3f;
+  --danger-hover: #743434;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
+
   background-image:
-    linear-gradient(rgba(245, 239, 230, 0.85), rgba(245, 239, 230, 0.85)),
+    linear-gradient(
+      rgba(238, 236, 233, 0.86),
+      rgba(238, 236, 233, 0.86)
+    ),
     url("./assets/met-facade.webp");
+
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  color: #2f261d;
+
+  color: var(--museum-text);
 }
 
 main {
@@ -25,7 +50,17 @@ form {
 input {
   flex: 1;
   padding: 0.8rem;
+
+  background: #ffffff;
+  color: var(--museum-text);
+
+  border: 1px solid var(--museum-medium);
   border-radius: 10px;
+}
+
+input:focus {
+  outline: 2px solid var(--museum-dark);
+  outline-offset: 1px;
 }
 
 button,
@@ -34,6 +69,8 @@ a {
   text-decoration: none;
   border-radius: 10px;
 }
+
+/* Artefact grid */
 
 .artefact-grid {
   display: grid;
@@ -44,31 +81,20 @@ a {
 .artefact-card {
   display: flex;
   flex-direction: column;
-  background: #fffaf2;
-  border: 1px solid #d8c4a8;
+
+  background: var(--museum-card);
+  border: 1px solid var(--museum-light);
+
   padding: 1rem;
   border-radius: 10px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
-}
 
-.card-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.75rem;
-  margin-top: auto;
-  padding-top: 1rem;
-}
-
-.card-actions .button,
-.card-actions .favorite-button {
-  flex: 1;
-  min-width: 0;
+  box-shadow: 0 5px 12px rgba(47, 41, 37, 0.22);
 }
 
 .artefact-card img {
   width: 100%;
   height: 220px;
+
   object-fit: cover;
   border-radius: 8px;
 }
@@ -76,59 +102,119 @@ a {
 .details-img {
   max-width: 800px;
   max-height: 800px;
+
   object-fit: cover;
+
+  border: 1px solid var(--museum-light);
   border-radius: 8px;
 }
 
 .image-placeholder {
   height: 220px;
+
   display: grid;
   place-items: center;
-  background: #e4d6c1;
+
+  background: var(--museum-placeholder);
+  color: var(--museum-dark);
+
   border-radius: 8px;
 }
+
+/* Card actions */
+
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 0.75rem;
+
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.card-actions .button {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Buttons */
 
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   min-height: 42px;
   padding: 0.65rem 1rem;
-  border: 1px solid #8f7b61;
+
+  border: 1px solid var(--museum-dark);
   border-radius: 8px;
+
   font: inherit;
   font-weight: 600;
+
   text-decoration: none;
+
   box-sizing: border-box;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+
+  box-shadow: 0 3px 8px rgba(47, 41, 37, 0.18);
 }
 
+/* Search, Details */
 .button-primary {
-  background: #8f7555;
-  color: #fff;
+  background: var(--museum-dark);
+  color: #ffffff;
+  border-color: var(--museum-dark);
 }
 
+.button-primary:hover {
+  background: var(--museum-medium);
+}
+
+/* Previous, Next, Save favorite, Back */
 .button-secondary {
-  background: #f7f0e6;
-  color: #2f2923;
+  background: var(--museum-card);
+  color: var(--museum-text);
+
+  border-color: var(--museum-medium);
 }
 
-.button-danger {
-  background: #8b3f3f;
-  color: white;
-  border-color: #8b3f3f;
+.button-secondary:hover {
+  background: var(--museum-pale);
 }
+
+/* Delete */
+.button-danger {
+  background: var(--danger);
+  color: #ffffff;
+
+  border-color: var(--danger);
+}
+
+.button-danger:hover {
+  background: var(--danger-hover);
+  border-color: var(--danger-hover);
+}
+
+/* Favorite */
 
 .favorite-action {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+
   gap: 0.25rem;
 }
 
@@ -143,7 +229,10 @@ a {
 
 .favorite-action small {
   font-size: 0.8rem;
+  color: var(--museum-dark);
 }
+
+/* Pagination */
 
 .pagination {
   display: flex;
@@ -153,24 +242,34 @@ a {
   margin: 2rem 0;
 }
 
+.pagination button {
+  min-width: 110px;
+}
+
 .pagination button:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
 }
+
+/* Loading */
 
 .loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+
   gap: 0.75rem;
   margin: 2rem 0;
+
   font-weight: bold;
 }
 
 .hourglass-loader {
   height: 128px;
   width: auto;
+
   object-fit: contain;
+
   animation: hourglass-flip 3s linear infinite;
 }
 
@@ -184,14 +283,20 @@ a {
   }
 }
 
+/* About page */
+
 .about-page {
   width: min(900px, 90%);
   margin: 2rem auto;
-  background: rgba(255, 250, 242, 0.94);
+
+  background: rgba(248, 246, 243, 0.95);
+
   padding: 2rem;
+
+  border: 1px solid var(--museum-light);
   border-radius: 12px;
-  border: 1px solid #d8c4a8;
-  box-shadow: 0 4px 12px rgba(47, 38, 29, 0.12);
+
+  box-shadow: 0 4px 12px rgba(47, 41, 37, 0.15);
 }
 
 .about-section {
@@ -200,6 +305,8 @@ a {
 
 .about-section h2 {
   margin-bottom: 0.75rem;
+
+  color: var(--museum-dark);
 }
 
 .about-section p {
@@ -207,10 +314,13 @@ a {
 }
 
 .about-section pre {
-  background: #2f261d;
-  color: #f5efe6;
+  background: var(--museum-dark);
+  color: var(--museum-card);
+
   padding: 1rem;
+
   border-radius: 8px;
+
   overflow-x: auto;
 }
 
@@ -222,29 +332,38 @@ a {
   padding-left: 1.5rem;
 }
 
+/* Header / Navigation */
+
 .site-header {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: rgba(255, 250, 242, 0.80);
-  border-bottom: 1px solid #d8c4a8;
+
+  background: rgba(248, 246, 243, 0.88);
+
+  border-bottom: 1px solid var(--museum-light);
+
   backdrop-filter: blur(6px);
 }
 
 .navbar {
   width: min(1100px, 90%);
   margin: 0 auto;
+
   padding: 0.5rem 0;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   gap: 1rem;
 }
 
 .logo {
   font-weight: bold;
   font-size: 1.1rem;
-  color: #2f261d;
+
+  color: var(--museum-text);
   text-decoration: none;
 }
 
@@ -254,24 +373,40 @@ a {
 }
 
 .nav-links a {
-  color: #2f261d;
+  color: var(--museum-text);
+
   text-decoration: none;
+
   padding: 0.4rem 0.6rem;
+
+  border: 1px solid transparent;
   border-radius: 6px;
 }
 
-.nav-links a:hover,
-.nav-links a.active {
-  background: #d8c4a8;
+.nav-links a:hover {
+  background: var(--museum-pale);
 }
 
-.artefact-card-in-fav {
-  background: #fffaf2;
-  border: 1px solid #d8c4a8;
-  padding: 1rem;
-  border-radius: 10px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+.nav-links a.active {
+  background: var(--museum-light);
+  border-color: var(--museum-dark);
 }
+
+/* Favorite cards */
+
+.artefact-card-in-fav {
+  background: var(--museum-card);
+
+  border: 1px solid var(--museum-light);
+
+  padding: 1rem;
+
+  border-radius: 10px;
+
+  box-shadow: 0 5px 12px rgba(47, 41, 37, 0.22);
+}
+
+/* Mobile */
 
 @media (max-width: 700px) {
   .navbar {
