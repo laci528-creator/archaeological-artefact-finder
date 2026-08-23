@@ -51,12 +51,14 @@ function Details() {
                     >
                     ← Back to results
                 </button> 
-                <h1>{cleanText(artefact.title) || "Untitled object"}</h1> {imageUrl && !imageError ? ( 
+                <h1>{cleanText(artefact.title) || "Untitled object"}</h1> 
+                <section className="details-card">
+                {imageUrl && !imageError ? ( 
                     <img className="details-img" src={imageUrl} alt={artefact.title || "Artefact"} onError={() => setImageError(true)}/> 
                 ) : ( 
                 <div className="image-placeholder">No image available.</div> 
                 )} 
-                
+                <div className="details-info">
                 <p><strong>Object name:</strong> {cleanText(artefact.objectName) || "Unknown"}</p> 
                 <p><strong>Culture:</strong> {artefact.culture || "Unknown"}</p> 
                 <p><strong>Period:</strong> {artefact.period || "Unknown"}</p> 
@@ -67,10 +69,11 @@ function Details() {
                 
                 
                 {artefact.objectURL && ( 
-                    <a href={artefact.objectURL} target="_blank" rel="noreferrer"> View object on The Met website </a> 
+                    <a className="button button-primary" href={artefact.objectURL} target="_blank" rel="noreferrer"> View object on The Met website </a> 
                     
                 )} 
-        
+                </div>
+                </section>
             </main> 
             
     ); 

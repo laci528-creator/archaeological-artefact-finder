@@ -99,22 +99,43 @@ a {
   border-radius: 8px;
 }
 
+.details-card {
+  max-width: 740px;
+  box-sizing: border-box;
+
+  background: rgba(255, 250, 244, 0.94);
+
+  border: 1px solid var(--museum-border);
+  border-radius: 12px;
+
+  padding: 1rem;
+
+  box-shadow: 0 4px 12px rgba(47, 38, 29, 0.15);
+}
+
 .details-img {
-  max-width: 800px;
-  max-height: 800px;
-
-  object-fit: cover;
-
-  border: 1px solid var(--museum-light);
+  display: block;
   border-radius: 8px;
+  width: 100%;
+  max-width: 100%;
+  max-height: 650px;
+  object-fit: center;
+  border: 1px solid var(--museum-light);
+
+}
+
+.details-info {
+  padding-top: 0.75rem;
+}
+
+.details-info p {
+  line-height: 1.4;
 }
 
 .image-placeholder {
   height: 220px;
-
   display: grid;
   place-items: center;
-
   background: var(--museum-placeholder);
   color: var(--museum-dark);
 
