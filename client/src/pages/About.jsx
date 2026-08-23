@@ -66,6 +66,7 @@ function About() {
           <li>Search state preserved when returning from object details</li>
           <li>Loading and error handling for external API requests</li>
           <li>Responsive user interface</li>
+          <li>Favorites in the live demo are shared between visitors and are intended for demonstration purposes.</li>
         </ul>
       </section>
 
