@@ -60,7 +60,8 @@ function Favorites() {
         <p className="error-message">{errorMessage}</p>
       )}
 
-      {!loading && favorites.length === 0 ?  (
+      {!loading && !errorMessage && (
+        favorites.length === 0 ? (
         <p>
           No saved artefacts yet. Start exploring and save your favorite
           objects.
@@ -112,14 +113,16 @@ function Favorites() {
                 >
                   Details
                 </Link>
-
-                <button onClick={() => handleDelete(favorite.id)}>
+                <button 
+                type="button"
+                onClick={() => handleDelete(favorite.id)}>
                   Delete
                 </button>
               </div>
             </article>
           ))}
         </section>
+      )
       )}
     </main>
   );
