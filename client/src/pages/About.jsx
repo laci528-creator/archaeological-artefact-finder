@@ -51,6 +51,12 @@ function About() {
           This feature demonstrates communication between the React frontend,
           the Express backend and a relational database.
         </p>
+
+          <p>
+            The live demo uses a shared database for demonstration purposes.
+            Favorites and notes are therefore visible to all visitors and may be
+            changed or removed by other users.
+          </p>
       </section>
 
       <section className="about-section">
@@ -66,7 +72,6 @@ function About() {
           <li>Search state preserved when returning from object details</li>
           <li>Loading and error handling for external API requests</li>
           <li>Responsive user interface</li>
-          <li>Favorites in the live demo are shared between visitors and are intended for demonstration purposes.</li>
         </ul>
       </section>
 
@@ -100,8 +105,9 @@ cd archaeological-artefact-finder`}
         </pre>
 
         <p>
-          Install the project dependencies and configure the environment
-          variables using the provided <code>.env.example</code> files.
+          Install the required dependencies, configure the environment variables
+          using the provided <code>.env.example</code> files and create the local
+          database using the supplied database schema.
         </p>
 
         <p>
@@ -134,7 +140,6 @@ cd archaeological-artefact-finder`}
           <li>JavaScript</li>
           <li>HTML5</li>
           <li>CSS3</li>
-          <li>Concurrently</li>
         </ul>
       </section>
     </main>
