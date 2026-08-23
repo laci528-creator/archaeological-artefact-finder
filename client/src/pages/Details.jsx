@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react"; 
 import { useParams } from "react-router-dom"; 
 import { getArtefactById } from "../services/api"; 
+import { cleanText } from "../utils/textUtils";
 
 function Details() { 
     const { id } = useParams(); 
     const [artefact, setArtefact] = useState(null); 
     const [loading, setLoading] = useState(true); 
-    const [errorMessage, setErrorMessage] = useState(""); 
-    
+    const [errorMessage, setErrorMessage] = useState("");
+    const [imageError, setImageError] = useState(false); 
     
     useEffect(() => { 
         async function loadArtefact() { 
@@ -34,15 +35,21 @@ function Details() {
         if (errorMessage) { 
             return <main>{errorMessage}</main>; 
         } 
+
+        const imageUrl =
+            artefact.primaryImage ||
+            artefact.primaryImageSmall ||
+            "";
+
         return ( 
             <main> 
-                <h1>{artefact.title || "Untitled object"}</h1> {artefact.primaryImage ? ( 
-                    <img className="details-img" src={artefact.primaryImage} alt={artefact.title} /> 
+                <h1>{cleanText(artefact.title) || "Untitled object"}</h1> {imageUrl && !imageError ? ( 
+                    <img className="details-img" src={imageUrl} alt={artefact.title || "Artefact"} onError={() => setImageError(true)}/> 
                 ) : ( 
-                <p>No image available.</p> 
+                <div className="image-placeholder">No image available.</div> 
                 )} 
                 
-                <p><strong>Object name:</strong> {artefact.objectName || "Unknown"}</p> 
+                <p><strong>Object name:</strong> {cleanText(artefact.objectName) || "Unknown"}</p> 
                 <p><strong>Culture:</strong> {artefact.culture || "Unknown"}</p> 
                 <p><strong>Period:</strong> {artefact.period || "Unknown"}</p> 
                 <p><strong>Date:</strong> {artefact.objectDate || "Unknown"}</p> 

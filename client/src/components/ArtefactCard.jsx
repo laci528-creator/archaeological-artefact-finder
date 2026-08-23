@@ -1,15 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { cleanText } from "../utils/textUtils";
 import FavoriteButton from "./FavoriteButton";
-
-function cleanText(text) {
-  if (!text) {
-    return "";
-  }
-
-  return text.replace(/<[^>]*>/g, "");
-}
-
 
 
 function ArtefactCard({ artefact }) {
