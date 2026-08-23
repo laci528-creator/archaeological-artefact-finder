@@ -1,19 +1,80 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchBar from "../components/SearchBar";
 import ArtefactList from "../components/ArtefactList";
 import { searchArtefacts } from "../services/api";
 import hourglassLoader from "../assets/hourglass-loader.png";
 
+function getSavedSearchState() {
+  try {
+    const savedState = sessionStorage.getItem("artefactSearchState");
+
+    return savedState ? JSON.parse(savedState) : null;
+  } catch {
+    return null;
+  }
+}
+
 function Home() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [lastSearchTerm, setLastSearchTerm] = useState("");
-  const [artefacts, setArtefacts] = useState([]);
-  const [page, setPage] = useState(1);
-  const [hasPreviousPage, setHasPreviousPage] = useState(false);
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const [totalObjectIDs, setTotalObjectIDs] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+const savedState = getSavedSearchState();
+const [searchTerm, setSearchTerm] = useState(
+  savedState?.searchTerm || ""
+);
+
+const [lastSearchTerm, setLastSearchTerm] = useState(
+  savedState?.lastSearchTerm || ""
+);
+
+const [artefacts, setArtefacts] = useState(
+  savedState?.artefacts || []
+);
+
+const [page, setPage] = useState(
+  savedState?.page || 1
+);
+
+const [hasPreviousPage, setHasPreviousPage] = useState(
+  savedState?.hasPreviousPage || false
+);
+
+const [hasNextPage, setHasNextPage] = useState(
+  savedState?.hasNextPage || false
+);
+
+const [totalObjectIDs, setTotalObjectIDs] = useState(
+  savedState?.totalObjectIDs || 0
+);
+
+const [loading, setLoading] = useState(false);
+const [errorMessage, setErrorMessage] = useState("");
+
+useEffect(() => {
+  if (!lastSearchTerm) {
+    return;
+  }
+
+  const searchState = {
+    searchTerm,
+    lastSearchTerm,
+    artefacts,
+    page,
+    hasPreviousPage,
+    hasNextPage,
+    totalObjectIDs,
+  };
+
+  sessionStorage.setItem(
+    "artefactSearchState",
+    JSON.stringify(searchState)
+  );
+}, [
+  searchTerm,
+  lastSearchTerm,
+  artefacts,
+  page,
+  hasPreviousPage,
+  hasNextPage,
+  totalObjectIDs,
+]);
 
 async function loadArtefacts(query, pageNumber) {
   try {

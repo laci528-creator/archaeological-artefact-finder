@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"; 
-import { useParams } from "react-router-dom"; 
+import { useParams, useNavigate } from "react-router-dom"; 
 import { getArtefactById } from "../services/api"; 
 import { cleanText } from "../utils/textUtils";
 
@@ -8,7 +8,8 @@ function Details() {
     const [artefact, setArtefact] = useState(null); 
     const [loading, setLoading] = useState(true); 
     const [errorMessage, setErrorMessage] = useState("");
-    const [imageError, setImageError] = useState(false); 
+    const [imageError, setImageError] = useState(false);
+    const navigate = useNavigate(); 
     
     useEffect(() => { 
         async function loadArtefact() { 
@@ -42,7 +43,14 @@ function Details() {
             "";
 
         return ( 
-            <main> 
+            <main>
+                <button
+                    type="button"
+                    onClick={() => navigate(-1)}
+                    className="back-button"
+                    >
+                    ← Back to results
+                </button> 
                 <h1>{cleanText(artefact.title) || "Untitled object"}</h1> {imageUrl && !imageError ? ( 
                     <img className="details-img" src={imageUrl} alt={artefact.title || "Artefact"} onError={() => setImageError(true)}/> 
                 ) : ( 
