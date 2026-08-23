@@ -1,7 +1,4 @@
 
-
-
-
 function SearchBar({ searchTerm, setSearchTerm, onSearch }) { 
     return ( 
         <form onSubmit={onSearch}> 

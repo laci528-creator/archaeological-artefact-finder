@@ -1,11 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
-
 import Home from "./pages/Home";
 import Details from "./pages/Details";
 import Favorites from "./pages/Favorites";
 import About from "./pages/About";
-
+import Footer from "./components/Footer";
 
 function App() { 
   return ( 
@@ -16,7 +15,8 @@ function App() {
         <Route path="/artefacts/:id" element={<Details />} /> 
         <Route path="/favorites" element={<Favorites />} /> 
         <Route path="/about" element={<About />} /> 
-      </Routes> 
+      </Routes>
+      <Footer /> 
     </BrowserRouter> 
   ); 
 } 
