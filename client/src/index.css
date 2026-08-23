@@ -127,7 +127,7 @@ a {
   width: 100%;
   max-width: 100%;
   max-height: 650px;
-  object-fit: center;
+  object-fit: contain;
   border: 1px solid var(--museum-light);
 
 }
@@ -433,6 +433,52 @@ a {
   border-radius: 10px;
 
   box-shadow: 0 5px 12px rgba(47, 41, 37, 0.22);
+}
+
+.artefact-card textarea {
+  width: 100%;
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
+  min-height: 70px;
+  padding: 0.6rem 0.7rem;
+
+  box-sizing: border-box;
+  resize: vertical;
+
+  font: inherit;
+  color: var(--museum-text);
+
+  background: var(--museum-card);
+  border: 1px solid var(--museum-border);
+  border-radius: 6px;
+
+  outline: none;
+}
+
+.artefact-card textarea:focus {
+  border-color: var(--museum-primary);
+  box-shadow: 0 0 0 2px rgba(198, 134, 66, 0.2);
+}
+
+.artefact-card textarea::placeholder {
+  color: #7a6b5c;
+}
+
+.note-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.artefact-card h2 {
+  margin: 0.8rem 0 0.6rem;
+  line-height: 1.2;
+}
+
+.artefact-card p {
+  margin: 0.35rem 0;
+  line-height: 1.35;
 }
 
 /* Mobile */

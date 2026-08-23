@@ -99,6 +99,7 @@ function Favorites() {
               </p>
 
               <textarea
+                id={`note-${favorite.id}`}
                 defaultValue={favorite.note || ""}
                 placeholder="Add your own note..."
                 onBlur={(event) =>
