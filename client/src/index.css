@@ -15,6 +15,13 @@
   /* Functional color */
   --danger: #8b3f3f;
   --danger-hover: #743434;
+
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 body {
@@ -39,6 +46,7 @@ main {
   width: min(1100px, 90%);
   margin: 0 auto;
   padding: 2rem 0;
+  flex: 1;
 }
 
 form {
@@ -444,7 +452,7 @@ a {
 /* Footer */ 
 
 .site-footer {
-  margin-top: 3rem;
+  margin-top: auto;
   padding: 1.25rem 1rem;
 
   text-align: center;
