@@ -109,12 +109,13 @@ function Favorites() {
               <div className="card-actions">
                 <Link
                   to={`/artefacts/${favorite.object_id}`}
-                  className="details-button"
+                  className="button button-secondary"
                 >
                   Details
                 </Link>
                 <button 
                 type="button"
+                className="button button-danger"
                 onClick={() => handleDelete(favorite.id)}>
                   Delete
                 </button>

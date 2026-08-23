@@ -39,7 +39,7 @@ function FavoriteButton({ artefact }) {
         type="button"
         onClick={handleAddFavorite}
         disabled={saving}
-        className="favorite-button"
+        className="button button-secondary"
       >
         {saving ? "Saving..." : "Save favorite"}
       </button>

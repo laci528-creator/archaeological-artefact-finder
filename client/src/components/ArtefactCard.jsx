@@ -45,7 +45,7 @@ const imageUrl =
       <div className="card-actions">
         <Link
           to={`/artefacts/${artefact.objectID}`}
-          className="details-button"
+          className="button button-primary"
         >
           Details
         </Link>

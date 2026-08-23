@@ -46,8 +46,8 @@ function Details() {
             <main>
                 <button
                     type="button"
+                    className="button button-secondary"
                     onClick={() => navigate(-1)}
-                    className="back-button"
                     >
                     ← Back to results
                 </button> 

@@ -11,7 +11,7 @@ function SearchBar({ searchTerm, setSearchTerm, onSearch }) {
                 value={searchTerm} 
                 onChange={(event) => setSearchTerm(event.target.value)} 
                 /> 
-                <button type="submit">Search</button> </form> 
+                <button type="submit" className="button button-primary">Search</button> </form> 
     );
 } 
                 

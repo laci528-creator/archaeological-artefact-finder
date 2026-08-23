@@ -87,7 +87,6 @@ async function loadArtefacts(query, pageNumber) {
       20
     );
 
-
     //console.log("Backend response:", data);
 
     setArtefacts(data.results || []);
@@ -137,6 +136,7 @@ async function handleNextPage() {
   <div className="pagination">
     <button
       type="button"
+      className="button button-secondary"
       onClick={handlePreviousPage}
       disabled={!hasPreviousPage || loading}
     >
@@ -147,6 +147,7 @@ async function handleNextPage() {
 
     <button
       type="button"
+      className="button button-secondary"
       onClick={handleNextPage}
       disabled={!hasNextPage || loading}
     >
