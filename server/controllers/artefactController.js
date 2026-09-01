@@ -20,8 +20,14 @@ async function fetchJsonWithRetry(url, label, retries = 1) {
         );
 
         // Do not retry 403 or 404 responses.
-        if (response.status === 403 || response.status === 404) {
+        if (response.status === 404) {
           return null;
+        }
+
+        if (response.status === 403) {
+          const error = new Error("MET API rate limit");
+          error.status = 403;
+          throw error;
         }
 
         // Retry other failed requests if another attempt is available.
@@ -43,6 +49,10 @@ async function fetchJsonWithRetry(url, label, retries = 1) {
       return await response.json();
     } catch (error) {
       console.log(`${label} error: ${error.message}. Attempt: ${attempt}`);
+
+        if (error.status === 403) {
+          throw error;
+        }
 
       if (attempt <= retries) {
         await delay(500);
@@ -155,7 +165,7 @@ export async function searchArtefacts(req, res) {
     const idsForThisPage = objectIDs.slice(startIndex, endIndex);
 
     const collectedArtefacts = [];
-    const batchSize = 3;
+    const batchSize = 2;
 
     for (
       let i = 0;
@@ -174,11 +184,11 @@ export async function searchArtefacts(req, res) {
         }
 
           collectedArtefacts.push(artefact);
-
-
+          
         }
-                  if (i + batchSize < idsForThisPage.length) {
-            await delay(300);
+
+        if (i + batchSize < idsForThisPage.length) {
+          await delay(500);
       }
 
     }
@@ -193,6 +203,13 @@ export async function searchArtefacts(req, res) {
     });
   } catch (error) {
     console.error("Search error:", error);
+
+      if (error.status === 403) {
+        return res.status(503).json({
+          message:
+            "The Met API is temporarily limiting requests. Please try again later.",
+        });
+      }
 
     res.status(500).json({
       message: "Error while loading artefacts.",
@@ -221,6 +238,13 @@ export async function getArtefactById(req, res) {
     res.json(artefact);
   } catch (error) {
     console.error("Artefact details error:", error);
+
+    if (error.status === 403) {
+      return res.status(503).json({
+        message:
+          "The Met API is temporarily limiting requests. Please try again later.",
+      });
+    }
 
     res.status(500).json({
       message: "Error while loading artefact details.",
