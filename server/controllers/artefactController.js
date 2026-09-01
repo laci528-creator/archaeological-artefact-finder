@@ -59,12 +59,22 @@ async function fetchJsonWithRetry(url, label, retries = 1) {
 async function getObjectIdsForSearch(query) {
   const normalizedQuery = query.trim().toLowerCase();
 
-  const searchUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${encodeURIComponent(
-    normalizedQuery)}`;
+  if (searchCache.has(normalizedQuery)) {
+    console.log(`Search cache hit: ${normalizedQuery}`);
+    return searchCache.get(normalizedQuery);
+  }
 
-    console.log(searchUrl);
+  const searchUrl =
+    `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${encodeURIComponent(
+      normalizedQuery
+    )}`;
 
-  const data = await fetchJsonWithRetry(searchUrl, "Met search request");
+  console.log(searchUrl);
+
+  const data = await fetchJsonWithRetry(
+    searchUrl,
+    "Met search request"
+  );
 
   if (!data) {
     return null;
@@ -72,9 +82,10 @@ async function getObjectIdsForSearch(query) {
 
   const objectIDs = data.objectIDs ?? [];
 
+  searchCache.set(normalizedQuery, objectIDs);
+
   return objectIDs;
 }
-
 
 
 async function fetchMetObject(id) {
@@ -144,7 +155,7 @@ export async function searchArtefacts(req, res) {
     const idsForThisPage = objectIDs.slice(startIndex, endIndex);
 
     const collectedArtefacts = [];
-    const batchSize = 5;
+    const batchSize = 3;
 
     for (
       let i = 0;
@@ -167,7 +178,7 @@ export async function searchArtefacts(req, res) {
 
         }
                   if (i + batchSize < idsForThisPage.length) {
-            await delay(100);
+            await delay(300);
       }
 
     }
