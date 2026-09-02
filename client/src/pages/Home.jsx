@@ -105,14 +105,16 @@ async function loadArtefacts(query, pageNumber) {
   async function handleSearch(event) {
     event.preventDefault();
 
-    if (!searchTerm.trim()) {
+    const trimmedSearchTerm = searchTerm.trim();
+
+    if (!trimmedSearchTerm) {
       setErrorMessage("Please enter a search term.");
       return;
     }
 
-    setLastSearchTerm(searchTerm);
+    setLastSearchTerm(trimmedSearchTerm);
 
-    await loadArtefacts(searchTerm, 1);
+    await loadArtefacts(trimmedSearchTerm, 1);
   }
 
 async function handlePreviousPage() {
@@ -190,7 +192,7 @@ async function handleNextPage() {
 
       {errorMessage && <p>{errorMessage}</p>}
 
-      {!loading && <ArtefactList artefacts={artefacts} />}
+      {!loading && lastSearchTerm && (<ArtefactList artefacts={artefacts} />)}
 
       {pagination}
 
