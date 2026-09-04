@@ -5,7 +5,12 @@ function Navbar() {
     <header className="site-header">
       <nav className="navbar">
         <NavLink to="/" className="logo">
-          Archaeological Artefact Finder
+          <img
+            src="/favicon.png"
+            alt=""
+            className="nav-logo"
+          />
+          <span>Archaeological Artefact Finder</span>
         </NavLink>
 
         <div className="nav-links">
