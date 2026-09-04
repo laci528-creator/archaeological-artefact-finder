@@ -497,20 +497,47 @@ a {
 
 /* Footer */ 
 
-.site-footer {
+.footer {
   margin-top: auto;
-  padding: 1.25rem 1rem;
-
+  padding: 0.5rem;
   text-align: center;
   font-size: 0.9rem;
 
   color: var(--museum-text);
   background: rgba(255, 250, 244, 0.88);
-
   border-top: 1px solid var(--museum-border);
+
   backdrop-filter: blur(6px);
 }
 
-.site-footer p {
+.footer-text {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
   margin: 0;
+}
+
+.portfolio-link {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 2px;
+
+  color: var(--museum-accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.portfolio-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .footer-text {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .footer-separator {
+    display: none;
+  }
 }
