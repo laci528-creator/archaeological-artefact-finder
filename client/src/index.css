@@ -522,7 +522,7 @@ a {
 /* Footer */ 
 
 .footer {
-  margin-top: auto;
+  margin-top: 1rem;
   padding: 0.5rem;
   text-align: center;
   font-size: 0.9rem;
@@ -538,6 +538,7 @@ a {
   display: flex;
   justify-content: center;
   gap: 8px;
+  padding: 0.4rem 0;
   margin: 0;
 }
 
@@ -545,7 +546,7 @@ a {
   display: inline-flex;
   align-items: center;
   margin-top: 2px;
-
+  padding: 0.5rem 0.5rem;
   color: var(--museum-accent);
   text-decoration: none;
   font-weight: 600;
