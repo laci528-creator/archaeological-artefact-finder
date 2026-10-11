@@ -20,7 +20,7 @@ async function fetchJsonWithRetry(url, label, retries = 1) {
         );
 
         // Do not retry 403 or 404 responses.
-        if (response.status === 404) {
+        if (response.status === 404 || response.status === 410) {
           return null;
         }
 
@@ -66,18 +66,19 @@ async function fetchJsonWithRetry(url, label, retries = 1) {
   return null;
 }
 
-async function getObjectIdsForSearch(query) {
+async function getObjectIdsForSearch(query, page, limit) {
   const normalizedQuery = query.trim().toLowerCase();
+  const offset = (page - 1) * limit;
 
-  if (searchCache.has(normalizedQuery)) {
-    console.log(`Search cache hit: ${normalizedQuery}`);
-    return searchCache.get(normalizedQuery);
+  const cacheKey = `${normalizedQuery}-${page}-${limit}`;
+
+  if (searchCache.has(cacheKey)) {
+    console.log(`Search cache hit: ${cacheKey}`);
+    return searchCache.get(cacheKey);
   }
 
   const searchUrl =
-    `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${encodeURIComponent(
-      normalizedQuery
-    )}`;
+    `https://collectionapi.metmuseum.org/public/collection/v1.1/search?q=${encodeURIComponent(normalizedQuery)}&offset=${offset}&limit=${limit}`;
 
   console.log(searchUrl);
 
@@ -90,11 +91,14 @@ async function getObjectIdsForSearch(query) {
     return null;
   }
 
-  const objectIDs = data.objectIDs ?? [];
+  const result = {
+    total: data.total ?? 0,
+    objectIDs: data.objectIDs ?? [],
+  };
 
-  searchCache.set(normalizedQuery, objectIDs);
+  searchCache.set(cacheKey, result);
 
-  return objectIDs;
+  return result;
 }
 
 
@@ -133,24 +137,30 @@ export async function searchArtefacts(req, res) {
         ? Math.min(parsedLimit, 20)
         : 20;
 
-    if (!query || !query.trim()) {
-      return res.status(400).json({
-        message: "Search query is required.",
-      });
-    }
+      if (typeof query !== "string" || !query.trim()) {
+        return res.status(400).json({
+          message: "Search query is required.",
+        });
+      }
 
-    const objectIDs = await getObjectIdsForSearch(query);
+    const searchData = await getObjectIdsForSearch(
+      query,
+      page,
+      limit
+    );
 
-    if (objectIDs === null) {
+    if (searchData === null) {
         return res.status(503).json({
           message:
             "The Met API is currently not available. Please try again later.",
         });
       }
 
-    if (objectIDs.length === 0) {
+    const { total, objectIDs } = searchData;
+
+    if (total === 0 || objectIDs.length === 0) {
       return res.json({
-        totalObjectIDs: 0,
+        totalObjectIDs: total,
         page,
         limit,
         results: [],
@@ -159,10 +169,7 @@ export async function searchArtefacts(req, res) {
       });
     }
 
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-
-    const idsForThisPage = objectIDs.slice(startIndex, endIndex);
+    const idsForThisPage = objectIDs;
 
     const collectedArtefacts = [];
     const batchSize = 2;
@@ -194,12 +201,12 @@ export async function searchArtefacts(req, res) {
     }
 
     res.json({
-      totalObjectIDs: objectIDs.length,
+      totalObjectIDs: total,
       page,
       limit,
       results: collectedArtefacts,
       hasPreviousPage: page > 1,
-      hasNextPage: endIndex < objectIDs.length,
+      hasNextPage: page * limit < Math.min(total, 10000),
     });
   } catch (error) {
     console.error("Search error:", error);
